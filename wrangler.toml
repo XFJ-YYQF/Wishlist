@@ -1,0 +1,13 @@
+name = "wishlist"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "."
+
+# D1 绑定 —— 先执行：wrangler d1 create wishlist_db，再把输出的 id 填到下面
+[[d1_databases]]
+binding = "DB"
+database_name = "wishlist_db"
+database_id = "6d7decbf-da3e-4de4-8e97-1cebdcae8daf"
+
+# Secrets（不要写在这里，用 wrangler pages secret put 设置）：
+#   ADMIN_PASSWORD   后台登录密码
+#   SESSION_SECRET   （可选）单独的会话签名密钥，不设则使用 ADMIN_PASSWORD
