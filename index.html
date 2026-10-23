@@ -117,18 +117,31 @@
     }
 
     .wish {
-      display: flex; align-items: center; gap: 16px;
+      display: flex; align-items: center; gap: 12px;
       background-color: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 16px 20px 16px 16px;
-      text-decoration: none; color: inherit;
+      padding: 16px 16px 16px 16px;
+      color: inherit;
       opacity: 0; transform: translateY(14px);
       animation: up .5s var(--ease) forwards;
       animation-delay: calc(var(--i, 0) * 0.05s);
       transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
     }
     .wish:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: transparent; }
+
+    .wish-main { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; text-decoration: none; color: inherit; border-radius: 12px; }
+
+    .copy-btn {
+      flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; color: var(--muted); border: 1px solid var(--border); cursor: pointer;
+      transition: background-color .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease);
+    }
+    .copy-btn:hover { background: var(--hover-bg); color: var(--accent-dark); transform: translateY(-1px); }
+    .copy-btn svg { width: 16px; height: 16px; }
+    .copy-btn.copied { color: var(--accent-dark); background: var(--accent-tint); border-color: var(--accent); }
+    .copy-btn:focus-visible, .wish-main:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
     .thumb {
       width: 84px; height: 84px; flex-shrink: 0;
@@ -190,6 +203,7 @@
       .page { padding-left: 16px; padding-right: 16px; }
       hr { margin: 24px 0 18px; }
       .thumb { width: 68px; height: 68px; }
+      .wish-main { gap: 12px; }
     }
   </style>
 </head>
@@ -243,14 +257,15 @@
 
     const links = CFG.footerLinks || {};
     const ico = {
+      gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
       user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>',
       gh: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>'
     };
     const parts = [];
     if (links.homepage && links.homepage.href) parts.push(`<a href="${esc(links.homepage.href)}" target="_blank" rel="noopener">${ico.user}${esc(links.homepage.name || '主页')}</a>`);
     if (links.github && links.github.href) parts.push(`<a href="${esc(links.github.href)}" target="_blank" rel="noopener">${ico.gh}GitHub</a>`);
+    parts.push(`<a href="/admin.html">${ico.gear}管理</a>`);
     $('site-footer').innerHTML = parts.join('<span class="sep">·</span>');
-    if (!parts.length) $('site-footer').hidden = true;
 
     function esc(s) {
       return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -258,7 +273,26 @@
     const safeHref = (u) => (/^https?:\/\//i.test(u) ? u : '#');
     const fmtPrice = (p) => (p == null ? '' : '¥' + Number(p).toFixed(2).replace(/\.?0+$/, ''));
 
+    const ICON_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+    const ICON_OK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
     let wishes = [], filter = 'all';
+
+    async function copyText(text) {
+      try { await navigator.clipboard.writeText(text); return true; } catch {}
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+      document.body.appendChild(ta); ta.select();
+      let ok = false; try { ok = document.execCommand('copy'); } catch {}
+      ta.remove(); return ok;
+    }
+    $('grid').addEventListener('click', async (e) => {
+      const b = e.target.closest('.copy-btn'); if (!b) return;
+      const w = wishes.find((x) => String(x.id) === b.closest('.wish').dataset.id); if (!w) return;
+      const ok = await copyText(w.url);
+      b.innerHTML = ok ? ICON_OK : ICON_COPY; b.classList.toggle('copied', ok);
+      b.title = ok ? '已复制' : '复制失败，请长按链接手动复制';
+      clearTimeout(b._t); b._t = setTimeout(() => { b.innerHTML = ICON_COPY; b.classList.remove('copied'); b.title = '复制商品链接'; }, 1600);
+    });
 
     function renderFilters() {
       const n = (f) => wishes.filter(f).length;
@@ -277,7 +311,8 @@
       if (!list.length) { $('grid').innerHTML = '<div class="empty">还没有心愿，过阵子再来看看～</div>'; return; }
       $('grid').innerHTML = list.map((w, i) => {
         const p = PLAT[w.platform] || PLAT.other;
-        return `<a class="wish${w.done ? ' done' : ''}" href="${esc(safeHref(w.url))}" target="_blank" rel="noopener noreferrer" style="--i:${Math.min(i, 12)}">
+        return `<div class="wish${w.done ? ' done' : ''}" data-id="${w.id}" style="--i:${Math.min(i, 12)}">
+          <a class="wish-main" href="${esc(safeHref(w.url))}" target="_blank" rel="noopener noreferrer">
           <div class="thumb">${w.image ? `<img src="${esc(w.image)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : esc(p[0])}</div>
           <div class="info">
             <span class="badge">${p}</span>
@@ -287,7 +322,9 @@
               ${w.done ? '<span class="status"><span class="status-dot"></span>已实现</span>' : ''}
             </div>
             ${w.note ? `<div class="wish-note">${esc(w.note)}</div>` : ''}
-          </div></a>`;
+          </div></a>
+          <button type="button" class="copy-btn" title="复制商品链接" aria-label="复制商品链接">${ICON_COPY}</button>
+        </div>`;
       }).join('');
     }
 

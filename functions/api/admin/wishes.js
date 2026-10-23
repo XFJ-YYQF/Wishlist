@@ -10,8 +10,9 @@ export function readBody(b) {
   if (!url) return { error: '商品链接无效' };
   if (!title) return { error: '标题不能为空' };
   const platform = platformOf(url) || 'other';
-  const price = b?.price === '' || b?.price == null ? null : Number(b.price);
-  if (price !== null && (!isFinite(price) || price < 0)) return { error: '价格无效' };
+  if (b?.price === '' || b?.price == null) return { error: '价格不能为空' };
+  const price = Number(b.price);
+  if (!isFinite(price) || price <= 0) return { error: '价格无效' };
   const image = httpUrl(clean(b?.image, 2000)) || null;
   return { platform, item_id: itemIdOf(url, platform) || null, url, title, image, price, note: clean(b?.note, 200) || null };
 }

@@ -153,7 +153,7 @@
       <input type="hidden" id="wid" />
       <div class="field"><label for="f-title">标题</label><input id="f-title" maxlength="120" required /></div>
       <div class="row2">
-        <div class="field"><label for="f-price">价格（元）</label><input id="f-price" type="number" min="0" step="0.01" placeholder="选填" /></div>
+        <div class="field"><label for="f-price">价格（元）<span style="color:var(--danger)">*</span></label><input id="f-price" type="number" min="0.01" step="0.01" placeholder="必填" required /></div>
         <div class="field"><label for="f-note">备注</label><input id="f-note" maxlength="200" placeholder="颜色 / 尺码 / 想要的理由" /></div>
       </div>
       <div class="field"><label for="f-url">商品链接</label><input id="f-url" type="url" required /></div>
@@ -216,9 +216,11 @@
       if (r.title) $('f-title').value = r.title;
       if (r.price) $('f-price').value = r.price;
       if (r.image) $('f-image').value = r.image;
-      if (r.partial) msg($('dash-msg'), '已识别平台和商品 ID，' + (!r.title ? '标题' : '主图') + '没抓到（平台反爬），请手动补充后保存', 'info');
+      const miss = [!r.title && '标题', !r.price && '价格', !r.image && '主图'].filter(Boolean);
+      if (!r.price) { $('f-price').focus(); }
+      if (miss.length) msg($('dash-msg'), '已识别平台和商品 ID，' + miss.join('、') + '没抓到（平台反爬），请手动补充后保存' + (r.price ? '' : '（价格必填）'), 'info');
       else msg($('dash-msg'), '解析成功，确认后点「添加心愿」', 'ok');
-      $('f-title').focus();
+      if (r.price) $('f-title').focus();
     } catch (err) { msg($('dash-msg'), err.message, 'error'); }
     b.disabled = false; b.textContent = '解析';
   }
